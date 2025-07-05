@@ -1,0 +1,17 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 14
+    commands:
+      - echo Installing dependencies...
+      - npm install
+  build:
+    commands:
+      - echo Running the Node.js app...
+      - node codebuild-lab/index.js
+
+artifacts:
+  files:
+    - '**/*'
