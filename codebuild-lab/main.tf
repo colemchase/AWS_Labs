@@ -23,6 +23,11 @@ resource "aws_iam_role_policy_attachment" "codebuild_policy_attach" {
   policy_arn = "arn:aws:iam::aws:policy/AWSCodeBuildDeveloperAccess"
 }
 
+resource "aws_iam_role_policy_attachment" "codebuild_logs_policy" {
+  role       = aws_iam_role.codebuild_role.name
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
+}
+
 resource "aws_codebuild_project" "this" {
   name          = "codebuild-lab"
   description   = "Build Node.js project from GitHub"
@@ -45,6 +50,6 @@ resource "aws_codebuild_project" "this" {
     source {
     type      = "GITHUB"
     location  = "https://github.com/colemchase/AWS.git"
-    buildspec = "buildspec.yml"
+    buildspec = "codebuild-lab/buildspec.yml"
     }
 }
