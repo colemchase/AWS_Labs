@@ -3,12 +3,15 @@ version: 0.2
 phases:
   install:
     commands:
-      - echo Preparing Python Lambda function...
+      - echo Installing zip utility...
+      - yum install -y zip
+
   build:
     commands:
+      - echo Zipping app.py for Lambda...
       - cd artifact-lab
-      - zip function.zip app.py
+      - zip ../function.zip app.py
 
 artifacts:
   files:
-    - artifact-lab/function.zip
+    - function.zip
