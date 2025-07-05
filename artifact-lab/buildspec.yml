@@ -1,0 +1,14 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo Preparing Python Lambda function...
+  build:
+    commands:
+      - cd artifact-lab
+      - zip function.zip app.py
+
+artifacts:
+  files:
+    - artifact-lab/function.zip
