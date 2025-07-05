@@ -6,10 +6,12 @@ phases:
       nodejs: 14
     commands:
       - cd codebuild-lab
+      - echo Installing dependencies...
       - npm install
+
   build:
     commands:
-      - cd codebuild-lab
+      - echo Running the Node.js app...
       - node index.js
 
 artifacts:
