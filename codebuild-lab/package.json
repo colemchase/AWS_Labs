@@ -1,0 +1,11 @@
+{
+  "name": "codebuild-lab",
+  "version": "1.0.0",
+  "description": "A simple Node.js app for AWS CodeBuild lab",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "colemchase",
+  "license": "MIT"
+}

@@ -5,6 +5,10 @@
 # Ignore plan output
 *.tfplan
 
+terraform.tfstate
+terraform.tfstate.*
+
+
 # Ignore large files and binaries
 *.exe
 *.zip

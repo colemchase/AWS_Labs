@@ -10,7 +10,7 @@ phases:
   build:
     commands:
       - echo Running the Node.js app...
-      - node codebuild-lab/index.js
+      - node index.js
 
 artifacts:
   files:
