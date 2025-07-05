@@ -11,9 +11,8 @@ phases:
   build:
     commands:
       - echo Zipping Lambda function...
-      - cd artifact-lab
-      - zip ../function.zip app.py
+      - zip artifact-lab/function.zip artifact-lab/app.py
 
 artifacts:
   files:
-    - function.zip
+    - artifact-lab/function.zip
