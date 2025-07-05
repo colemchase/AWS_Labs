@@ -1,23 +1,11 @@
-# Ignore Terraform state and backups
-*.tfstate
-*.tfstate.*
-.crash
+# Ignore Terraform plugin binaries
 .terraform/
-.terraform.lock.hcl
 
-# Ignore Terraform variable files with secrets
-*.tfvars
-*.tfvars.json
 
-# Ignore override and plan files
-terraform.tfplan
-*.override.tf
-*.override.tf.json
+# Ignore plan output
+*.tfplan
 
-# Optional: Ignore log/output files
-*.log
-
-.terraform/
-*.tfstate
-*.tfstate.*
-.terraform.lock.hcl
+# Ignore large files and binaries
+*.exe
+*.zip
+*.tar.gz
