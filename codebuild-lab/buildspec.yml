@@ -5,11 +5,11 @@ phases:
     runtime-versions:
       nodejs: 14
     commands:
-      - echo Installing dependencies...
+      - cd codebuild-lab
       - npm install
   build:
     commands:
-      - echo Running the Node.js app...
+      - cd codebuild-lab
       - node index.js
 
 artifacts:
