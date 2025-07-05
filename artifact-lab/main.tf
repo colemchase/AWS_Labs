@@ -11,38 +11,25 @@ resource "aws_s3_bucket" "artifact_bucket" {
 # IAM Role for CodeBuild
 resource "aws_iam_role" "codebuild_role" {
   name = "codebuild-artifact-role"
-
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [{
-      Action = "sts:AssumeRole",
+      Effect    = "Allow",
       Principal = { Service = "codebuild.amazonaws.com" },
-      Effect = "Allow"
+      Action    = "sts:AssumeRole"
     }]
   })
 }
 
-resource "aws_iam_role_policy" "codebuild_s3_policy" {
-  name = "codebuild-s3-policy"
-  role = aws_iam_role.codebuild_role.id
+# Attach CodeBuild and CloudWatch policies
+resource "aws_iam_role_policy_attachment" "codebuild_access" {
+  role       = aws_iam_role.codebuild_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AWSCodeBuildDeveloperAccess"
+}
 
-  policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Effect = "Allow",
-        Action = [
-          "s3:GetObject",
-          "s3:PutObject",
-          "s3:ListBucket"
-        ],
-        Resource = [
-          "arn:aws:s3:::artifact-lab-8858",
-          "arn:aws:s3:::artifact-lab-8858/*"
-        ]
-      }
-    ]
-  })
+resource "aws_iam_role_policy_attachment" "logs_access" {
+  role       = aws_iam_role.codebuild_role.name
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
 }
 
 # CodeBuild Project
@@ -66,9 +53,9 @@ resource "aws_codebuild_project" "artifact_build" {
   }
 
   environment {
-    compute_type    = "BUILD_GENERAL1_SMALL"
-    image           = "aws/codebuild/standard:6.0"
-    type            = "LINUX_CONTAINER"
-    privileged_mode = false
+  compute_type                = "BUILD_GENERAL1_SMALL"
+  image                       = "aws/codebuild/standard:6.0"
+  type                        = "LINUX_CONTAINER"
+  privileged_mode             = false
   }
 }

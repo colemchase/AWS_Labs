@@ -2,13 +2,15 @@ version: 0.2
 
 phases:
   install:
+    runtime-versions:
+      python: 3.11
     commands:
       - echo Installing zip utility...
-      - yum install -y zip
+      - apt-get update && apt-get install -y zip
 
   build:
     commands:
-      - echo Zipping app.py for Lambda...
+      - echo Zipping Lambda function...
       - cd artifact-lab
       - zip ../function.zip app.py
 
