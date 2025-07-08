@@ -1,0 +1,13 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      python: 3.11
+  build:
+    commands:
+      - mkdir -p artifact-lab
+      - cp app.py artifact-lab/
+      - zip -r function.zip artifact-lab
+artifacts:
+  files:
+    - function.zip
