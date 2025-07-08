@@ -1,13 +1,18 @@
 version: 0.2
+
 phases:
   install:
     runtime-versions:
       python: 3.11
+    commands:
+      - echo Installing zip utility...
+      - apt-get update && apt-get install -y zip
+
   build:
     commands:
-      - mkdir -p artifact-lab
-      - cp app.py artifact-lab/
-      - zip -r function.zip artifact-lab
+      - echo Zipping Lambda function...
+      - zip codedeploy-lab/function.zip codedeploy-lab/app.py
+
 artifacts:
   files:
-    - function.zip
+    - codedeploy-lab/function.zip
