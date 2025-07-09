@@ -7,7 +7,7 @@
 
 terraform.tfstate
 terraform.tfstate.*
-
+.terraform.lock.hcl
 
 # Ignore large files and binaries
 *.exe
