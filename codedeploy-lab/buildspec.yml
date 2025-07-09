@@ -16,15 +16,15 @@ phases:
 
       # Build appspec.yml with dynamic version
       - cat > codedeploy-lab/appspec.yml <<EOF
-version: 0.0
-Resources:
-  - MyLambdaFunction:
-      Type: AWS::Lambda::Function
-      Properties:
-        Name: codedeploy-lab-function
-        Alias: live
-        CurrentVersion: version-${LAMBDA_VERSION}
-EOF
+        version: 0.0
+        Resources:
+          - MyLambdaFunction:
+              Type: AWS::Lambda::Function
+              Properties:
+                Name: codedeploy-lab-function
+                Alias: live
+                CurrentVersion: version-${LAMBDA_VERSION}
+        EOF
 
 
       - zip function.zip codedeploy-lab/app.py codedeploy-lab/appspec.yml
