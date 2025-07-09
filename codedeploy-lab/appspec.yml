@@ -1,0 +1,8 @@
+version: 0.0
+Resources:
+  - MyLambdaFunction:
+      Type: AWS::Lambda::Function
+      Properties:
+        Name: codedeploy-lab-function
+        Alias: live
+        CurrentVersion: version-1
