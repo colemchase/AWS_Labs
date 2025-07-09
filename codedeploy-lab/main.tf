@@ -1,6 +1,5 @@
 provider "aws" {
   region  = "us-east-1"
-  profile = "chase-sso"
 }
 
 # S3 bucket to store artifact
@@ -69,7 +68,7 @@ resource "aws_codebuild_project" "artifact_build" {
   artifacts {
     type      = "S3"
     location  = aws_s3_bucket.codedeploy_lab_bucket.bucket
-    packaging = "ZIP"
+    packaging = "NONE"
     name      = "function.zip"
   }
 
@@ -102,6 +101,7 @@ resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
 }
 
 # CodeDeploy Role
+
 resource "aws_iam_role" "codedeploy_role" {
   name = "codedeploy-lambda-role"
   assume_role_policy = jsonencode({
@@ -115,6 +115,26 @@ resource "aws_iam_role" "codedeploy_role" {
     }]
   })
 }
+
+resource "aws_iam_role_policy" "codedeploy_s3_access" {
+  name = "codedeploy-s3-access"
+  role = aws_iam_role.codedeploy_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Effect = "Allow",
+      Action = [
+        "s3:GetObject",
+        "s3:GetObjectVersion"
+      ],
+      Resource = [
+        "${aws_s3_bucket.codedeploy_lab_bucket.arn}/*"
+      ]
+    }]
+  })
+}
+
 
 resource "aws_iam_role_policy_attachment" "codedeploy_policy" {
   role       = aws_iam_role.codedeploy_role.name
@@ -153,18 +173,18 @@ resource "aws_codedeploy_deployment_group" "lambda_group" {
 # Then uncomment these blocks and run `terraform apply` again
 # ------------------------------------------
 
-resource "aws_lambda_function" "lab_function" {
-  function_name = "codedeploy-lab-function"
-  role          = aws_iam_role.lambda_exec.arn
-  handler       = "app.lambda_handler"
-  runtime       = "python3.11"
-  s3_bucket     = aws_s3_bucket.codedeploy_lab_bucket.bucket
-  s3_key        = "function.zip"
-  publish       = true
-}
+# resource "aws_lambda_function" "lab_function" {
+#   function_name = "codedeploy-lab-function"
+#   role          = aws_iam_role.lambda_exec.arn
+#   handler       = "app.lambda_handler"
+#   runtime       = "python3.11"
+#   s3_bucket     = aws_s3_bucket.codedeploy_lab_bucket.bucket
+#   s3_key        = "function.zip"
+#   publish       = true
+# }
 
-resource "aws_lambda_alias" "live" {
-  name             = "live"
-  function_name    = aws_lambda_function.lab_function.function_name
-  function_version = aws_lambda_function.lab_function.version
-}
+# resource "aws_lambda_alias" "live" {
+#   name             = "live"
+#   function_name    = aws_lambda_function.lab_function.function_name
+#   function_version = aws_lambda_function.lab_function.version
+# }
