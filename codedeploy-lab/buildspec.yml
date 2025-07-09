@@ -5,13 +5,12 @@ phases:
     runtime-versions:
       python: 3.11
     commands:
-      - echo Installing zip utility...
       - apt-get update && apt-get install -y zip
 
   build:
     commands:
-      - echo Zipping Lambda function...
-      - zip codedeploy-lab/function.zip codedeploy-lab/app.py
+      - echo "Zipping Lambda function and appspec..."
+      - zip -r codedeploy-lab/function.zip codedeploy-lab/
 
 artifacts:
   files:
