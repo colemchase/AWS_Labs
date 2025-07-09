@@ -188,18 +188,3 @@ resource "aws_lambda_alias" "live" {
 }
 
 
-# STEP 2 : Deploy onto lambda
-
-resource "aws_codedeploy_deployment" "lambda_deploy" {
-  application_name     = aws_codedeploy_app.lambda_app.name
-  deployment_group_name = aws_codedeploy_deployment_group.lambda_group.deployment_group_name
-
-  s3_location {
-    bucket     = aws_s3_bucket.codedeploy_lab_bucket.bucket
-    key        = "function.zip"
-    bundle_type = "zip"
-  }
-
-  file_exists_behavior = "OVERWRITE"
-}
-

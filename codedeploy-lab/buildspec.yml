@@ -9,12 +9,10 @@ phases:
 
   build:
     commands:
-      - echo "Zipping app.py and appspec.yml into function.zip"
-      - cd codedeploy-lab
-      - zip ../function.zip app.py appspec.yml
+      - echo "Creating function.zip..."
+      - zip function.zip codedeploy-lab/app.py codedeploy-lab/appspec.yml
 
-  post_build:
-    commands:
-      - echo "Uploading function.zip to S3"
-      - aws s3 cp ../function.zip s3://codedeploy-lab-8858/function.zip
+artifacts:
+  files:
+    - function.zip
 
