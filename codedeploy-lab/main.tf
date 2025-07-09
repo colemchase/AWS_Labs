@@ -68,7 +68,7 @@ resource "aws_codebuild_project" "artifact_build" {
    artifacts {
     type      = "S3"
     location  = aws_s3_bucket.codedeploy_lab_bucket.bucket
-    packaging = "NONE"
+    packaging = "ZIP"
     name      = "function.zip"
   }
 

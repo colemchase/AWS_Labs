@@ -20,7 +20,8 @@ phases:
         echo "        Name: codedeploy-lab-function" >> codedeploy-lab/appspec.yml
         echo "        Alias: live" >> codedeploy-lab/appspec.yml
         echo "        CurrentVersion: version-${LAMBDA_VERSION}" >> codedeploy-lab/appspec.yml
-      - zip function.zip codedeploy-lab/app.py codedeploy-lab/appspec.yml
+      - mv codedeploy-lab/app.py app.py
+      - mv codedeploy-lab/appspec.yml appspec.yml
 
 artifacts:
   files:
