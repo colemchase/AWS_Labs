@@ -80,17 +80,18 @@ resource "aws_codebuild_project" "artifact_build" {
   }
 }
 
-resource "aws_iam_role_policy" "codebuild_lambda_list" {
-  name = "codebuild-lambda-list-versions"
+resource "aws_iam_role_policy" "codebuild_lambda_access" {
+  name = "codebuild-lambda-access"
   role = aws_iam_role.codebuild_role.id
 
   policy = jsonencode({
-    Version = "2012-10-17"
+    Version = "2012-10-17",
     Statement = [{
-      Effect = "Allow"
+      Effect = "Allow",
       Action = [
+        "lambda:GetFunction",
         "lambda:ListVersionsByFunction"
-      ]
+      ],
       Resource = "arn:aws:lambda:us-east-1:940797399432:function:codedeploy-lab-function"
     }]
   })
