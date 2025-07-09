@@ -9,10 +9,11 @@ phases:
 
   build:
     commands:
-      - echo "Zipping app.py and appspec.yml into function.zip..."
-      - cd codedeploy-lab
-      - zip ../function.zip app.py appspec.yml
+      - mkdir artifact
+      - cp codedeploy-lab/app.py artifact/
+      - cp codedeploy-lab/appspec.yml artifact/
 
 artifacts:
+  # tell CodeBuild to zip the contents of "artifact/"
   files:
-    - function.zip
+    - artifact/**
