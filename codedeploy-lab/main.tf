@@ -21,6 +21,29 @@ resource "aws_iam_role" "codebuild_role" {
   })
 }
 
+resource "aws_iam_role_policy" "codebuild_s3_access" {
+  name = "codebuild-s3-upload"
+  role = aws_iam_role.codebuild_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "s3:PutObject",
+          "s3:GetObject",
+          "s3:ListBucket"
+        ],
+        Resource = [
+          aws_s3_bucket.codedeploy_lab_bucket.arn,
+          "${aws_s3_bucket.codedeploy_lab_bucket.arn}/*"
+        ]
+      }
+    ]
+  })
+}
+
 resource "aws_iam_role_policy_attachment" "codebuild_access" {
   role       = aws_iam_role.codebuild_role.name
   policy_arn = "arn:aws:iam::aws:policy/AWSCodeBuildDeveloperAccess"
@@ -114,9 +137,10 @@ resource "aws_codedeploy_deployment_group" "lambda_group" {
   deployment_config_name = "CodeDeployDefault.LambdaAllAtOnce"
 
   deployment_style {
-    deployment_type   = "BLUE_GREEN"
-    deployment_option = "WITHOUT_TRAFFIC_CONTROL"
+  deployment_type   = "BLUE_GREEN"
+  deployment_option = "WITH_TRAFFIC_CONTROL"
   }
+
 
   auto_rollback_configuration {
     enabled = true
@@ -130,18 +154,18 @@ resource "aws_codedeploy_deployment_group" "lambda_group" {
 # Then uncomment these blocks and run `terraform apply` again
 # ------------------------------------------
 
-# resource "aws_lambda_function" "lab_function" {
-#   function_name = "codedeploy-lab-function"
-#   role          = aws_iam_role.lambda_exec.arn
-#   handler       = "app.lambda_handler"
-#   runtime       = "python3.11"
-#   s3_bucket     = aws_s3_bucket.codedeploy_lab_bucket.bucket
-#   s3_key        = "codedeploy-lab/function.zip"
-#   publish       = true
-# }
+resource "aws_lambda_function" "lab_function" {
+  function_name = "codedeploy-lab-function"
+  role          = aws_iam_role.lambda_exec.arn
+  handler       = "app.lambda_handler"
+  runtime       = "python3.11"
+  s3_bucket     = aws_s3_bucket.codedeploy_lab_bucket.bucket
+  s3_key        = "function.zip"
+  publish       = true
+}
 
-# resource "aws_lambda_alias" "live" {
-#   name             = "live"
-#   function_name    = aws_lambda_function.lab_function.function_name
-#   function_version = aws_lambda_function.lab_function.version
-# }
+resource "aws_lambda_alias" "live" {
+  name             = "live"
+  function_name    = aws_lambda_function.lab_function.function_name
+  function_version = aws_lambda_function.lab_function.version
+}

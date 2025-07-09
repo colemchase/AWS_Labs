@@ -10,8 +10,8 @@ phases:
   build:
     commands:
       - echo "Zipping Lambda function and appspec..."
-      - zip -r codedeploy-lab/function.zip codedeploy-lab/
+      - zip -r function.zip codedeploy-lab/
 
 artifacts:
   files:
-    - codedeploy-lab/function.zip
+    - function.zip
