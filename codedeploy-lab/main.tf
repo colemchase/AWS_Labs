@@ -3,12 +3,12 @@ provider "aws" {
   profile = "chase-sso"
 }
 
-# S3 Bucket for artifact
+# S3 bucket to store artifact
 resource "aws_s3_bucket" "codedeploy_lab_bucket" {
   bucket = "codedeploy-lab-8858"
 }
 
-# CodeBuild Role
+# IAM Role for CodeBuild
 resource "aws_iam_role" "codebuild_role" {
   name = "codebuild-artifact-role"
   assume_role_policy = jsonencode({
@@ -16,7 +16,7 @@ resource "aws_iam_role" "codebuild_role" {
     Statement = [{
       Effect = "Allow",
       Principal = { Service = "codebuild.amazonaws.com" },
-      Action = "sts:AssumeRole"
+      Action    = "sts:AssumeRole"
     }]
   })
 }
@@ -59,7 +59,7 @@ resource "aws_codebuild_project" "artifact_build" {
   }
 }
 
-# Lambda Execution Role
+# Lambda execution role
 resource "aws_iam_role" "lambda_exec" {
   name = "lambda-codedeploy-role"
   assume_role_policy = jsonencode({
@@ -79,30 +79,6 @@ resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
-# Lambda Function
-resource "aws_lambda_function" "lab_function" {
-  function_name = "codedeploy-lab-function"
-  role          = aws_iam_role.lambda_exec.arn
-  handler       = "app.lambda_handler"
-  runtime       = "python3.11"
-  s3_bucket     = aws_s3_bucket.codedeploy_lab_bucket.bucket
-  s3_key        = "codedeploy-lab/function.zip"
-  publish       = true
-}
-
-# Lambda Alias
-resource "aws_lambda_alias" "live" {
-  name             = "live"
-  function_name    = aws_lambda_function.lab_function.function_name
-  function_version = aws_lambda_function.lab_function.version
-}
-
-# CodeDeploy App
-resource "aws_codedeploy_app" "lambda_app" {
-  name             = "codedeploy-lambda-app"
-  compute_platform = "Lambda"
-}
-
 # CodeDeploy Role
 resource "aws_iam_role" "codedeploy_role" {
   name = "codedeploy-lambda-role"
@@ -110,7 +86,9 @@ resource "aws_iam_role" "codedeploy_role" {
     Version = "2012-10-17",
     Statement = [{
       Effect = "Allow",
-      Principal = { Service = "codedeploy.amazonaws.com" },
+      Principal = {
+        Service = "codedeploy.amazonaws.com"
+      },
       Action = "sts:AssumeRole"
     }]
   })
@@ -121,7 +99,13 @@ resource "aws_iam_role_policy_attachment" "codedeploy_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSCodeDeployRoleForLambda"
 }
 
-# Deployment Group
+# CodeDeploy Application
+resource "aws_codedeploy_app" "lambda_app" {
+  name             = "codedeploy-lambda-app"
+  compute_platform = "Lambda"
+}
+
+# Deployment Group (no traffic shifting!)
 resource "aws_codedeploy_deployment_group" "lambda_group" {
   app_name              = aws_codedeploy_app.lambda_app.name
   deployment_group_name = "codedeploy-lambda-dg"
@@ -130,19 +114,8 @@ resource "aws_codedeploy_deployment_group" "lambda_group" {
   deployment_config_name = "CodeDeployDefault.LambdaAllAtOnce"
 
   deployment_style {
-    deployment_type  = "BLUE_GREEN"
-    deployment_option = "WITH_TRAFFIC_CONTROL"
-  }
-
-  blue_green_deployment_config {
-    terminate_blue_instances_on_deployment_success {
-      action                          = "TERMINATE"
-      termination_wait_time_in_minutes = 5
-    }
-
-    deployment_ready_option {
-      action_on_timeout = "CONTINUE_DEPLOYMENT"
-    }
+    deployment_type   = "BLUE_GREEN"
+    deployment_option = "WITHOUT_TRAFFIC_CONTROL"
   }
 
   auto_rollback_configuration {
@@ -150,3 +123,25 @@ resource "aws_codedeploy_deployment_group" "lambda_group" {
     events  = ["DEPLOYMENT_FAILURE"]
   }
 }
+
+# ------------------------------------------
+# 🚫 STEP 1: COMMENTED OUT until build runs
+# Push to GitHub → Let CodeBuild create function.zip in S3
+# Then uncomment these blocks and run `terraform apply` again
+# ------------------------------------------
+
+# resource "aws_lambda_function" "lab_function" {
+#   function_name = "codedeploy-lab-function"
+#   role          = aws_iam_role.lambda_exec.arn
+#   handler       = "app.lambda_handler"
+#   runtime       = "python3.11"
+#   s3_bucket     = aws_s3_bucket.codedeploy_lab_bucket.bucket
+#   s3_key        = "codedeploy-lab/function.zip"
+#   publish       = true
+# }
+
+# resource "aws_lambda_alias" "live" {
+#   name             = "live"
+#   function_name    = aws_lambda_function.lab_function.function_name
+#   function_version = aws_lambda_function.lab_function.version
+# }
