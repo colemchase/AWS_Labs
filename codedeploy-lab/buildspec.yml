@@ -24,4 +24,5 @@ phases:
 
 artifacts:
   files:
-    - function.zip
+    - app.py
+    - appspec.yml

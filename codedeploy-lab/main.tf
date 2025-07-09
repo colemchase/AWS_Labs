@@ -65,10 +65,12 @@ resource "aws_codebuild_project" "artifact_build" {
     buildspec = "codedeploy-lab/buildspec.yml"
   }
 
-  artifacts {
-    type = "NO_ARTIFACTS"
+   artifacts {
+    type      = "S3"
+    location  = aws_s3_bucket.codedeploy_lab_bucket.bucket
+    packaging = "NONE"
+    name      = "function.zip"
   }
-
 
   environment {
     compute_type      = "BUILD_GENERAL1_SMALL"
