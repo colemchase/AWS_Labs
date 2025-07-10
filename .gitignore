@@ -11,5 +11,5 @@ terraform.tfstate.*
 
 # Ignore large files and binaries
 *.exe
-*.zip
+# *.zip
 *.tar.gz
