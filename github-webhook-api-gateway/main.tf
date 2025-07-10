@@ -37,6 +37,11 @@ resource "aws_iam_role_policy" "lambda_policy" {
         Effect = "Allow",
         Action = "codepipeline:StartPipelineExecution",
         Resource = "*"
+      },
+      {
+        Effect = "Allow",
+        Action = "sns:Publish",
+        Resource = aws_sns_topic.webhook_alert.arn
       }
     ]
   })
@@ -95,4 +100,16 @@ resource "aws_lambda_permission" "allow_apigw" {
 output "webhook_url" {
   value = aws_apigatewayv2_api.api.api_endpoint
   description = "Paste this into the GitHub webhook Payload URL"
+}
+
+
+
+resource "aws_sns_topic" "webhook_alert" {
+  name = "webhook-email-alert"
+}
+
+resource "aws_sns_topic_subscription" "email_sub" {
+  topic_arn = aws_sns_topic.webhook_alert.arn
+  protocol  = "email"
+  endpoint  = var.alert_email  # e.g., you@example.com
 }

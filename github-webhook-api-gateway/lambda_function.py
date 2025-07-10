@@ -1,9 +1,13 @@
 import boto3
 
 def lambda_handler(event, context):
-    client = boto3.client('codepipeline')
-    response = client.start_pipeline_execution(name='your-pipeline-name')
+    sns = boto3.client('sns')
+    sns.publish(
+        TopicArn='arn:aws:sns:us-east-1:940797399432:webhook-email-alert',
+        Subject='GitHub Webhook Triggered',
+        Message='A GitHub push triggered this Lambda via webhook.'
+    )
     return {
         'statusCode': 200,
-        'body': 'Pipeline triggered!'
+        'body': 'SNS email sent!'
     }
