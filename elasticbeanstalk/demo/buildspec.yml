@@ -4,13 +4,11 @@ phases:
     commands:
       - cd elasticbeanstalk/demo
       - mvn -q clean package
-
-  post_build:
-    commands:
-      # you're already in elasticbeanstalk/demo, so COPY from target...
-      - cp target/sample.war $CODEBUILD_SRC_DIR
-
-
+      - cd target
+      - pwd
+      - cp sample.war ../../../
+      - cd ../../../
+      - ls
 
 artifacts:
   files:
