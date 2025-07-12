@@ -7,7 +7,9 @@ phases:
 
   post_build:
     commands:
-      - cp target/sample.war $CODEBUILD_SRC_DIR/../..  # moves it to repo root
+      # you're already in elasticbeanstalk/demo, so COPY from target...
+      - cp target/sample.war $CODEBUILD_SRC_DIR
+
 
 
 artifacts:
