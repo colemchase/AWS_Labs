@@ -7,7 +7,7 @@ phases:
 
   post_build:
     commands:
-      - cp elasticbeanstalk/demo/target/sample.war .
+      - cp target/sample.war ../../  # moves it to repo root
 
 
 artifacts:
