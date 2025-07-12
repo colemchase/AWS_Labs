@@ -3,9 +3,14 @@ phases:
   build:
     commands:
       - cd elasticbeanstalk/demo
-      - mvn clean package
+      - mvn -q clean package
+
+  post_build:
+    commands:
+      - cp target/sample.war .
+
 
 artifacts:
   files:
-    - target/sample.war
+    - sample.war
   discard-paths: yes
