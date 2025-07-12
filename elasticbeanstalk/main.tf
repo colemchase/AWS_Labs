@@ -107,11 +107,6 @@ resource "aws_codebuild_project" "war_build" {
     compute_type = "BUILD_GENERAL1_SMALL"
     image        = "aws/codebuild/standard:7.0"
     type         = "LINUX_CONTAINER"
-
-    environment_variable {
-      name  = "CODEBUILD_SRC_DIR"
-      value = "elasticbeanstalk/demo"
-    }
   }
 
   logs_config {
