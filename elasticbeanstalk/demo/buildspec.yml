@@ -7,7 +7,7 @@ phases:
 
   post_build:
     commands:
-      - cp target/sample.war ../../  # moves it to repo root
+      - cp target/sample.war $CODEBUILD_SRC_DIR/../..  # moves it to repo root
 
 
 artifacts:

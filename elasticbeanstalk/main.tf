@@ -99,7 +99,6 @@ resource "aws_codebuild_project" "war_build" {
     type      = "S3"
     location  = aws_s3_bucket.eb_app.bucket
     path      = "artifacts"
-    name      = "sample.war"
     packaging = "NONE"
   }
 
