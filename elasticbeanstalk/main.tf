@@ -78,15 +78,21 @@ resource "aws_iam_role_policy_attachment" "codebuild_policy" {
   policy_arn = "arn:aws:iam::aws:policy/AWSCodeBuildDeveloperAccess"
 }
 
+resource "aws_iam_role_policy_attachment" "codebuild_logs" {
+  role       = aws_iam_role.codebuild_role.name
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
+}
+
 resource "aws_codebuild_project" "war_build" {
   name          = "war-builder"
   service_role  = aws_iam_role.codebuild_role.arn
   build_timeout = 10
 
   source {
-    type      = "GITHUB"
-    location  = "https://github.com/colemchase/AWS_Labs.git"
-    buildspec = "elasticbeanstalk/demo/buildspec.yml"
+    type            = "GITHUB"
+    location        = "https://github.com/colemchase/AWS_Labs.git"
+    buildspec       = "elasticbeanstalk/demo/buildspec.yml"
+    git_clone_depth = 1
   }
 
   artifacts {
@@ -101,5 +107,18 @@ resource "aws_codebuild_project" "war_build" {
     compute_type = "BUILD_GENERAL1_SMALL"
     image        = "aws/codebuild/standard:7.0"
     type         = "LINUX_CONTAINER"
+
+    environment_variable {
+      name  = "CODEBUILD_SRC_DIR"
+      value = "elasticbeanstalk/demo"
+    }
+  }
+
+  logs_config {
+    cloudwatch_logs {
+      status      = "ENABLED"
+      group_name  = "/aws/codebuild/war-builder"
+      stream_name = "war-builder-stream"
+    }
   }
 }
