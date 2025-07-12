@@ -117,3 +117,23 @@ resource "aws_codebuild_project" "war_build" {
     }
   }
 }
+resource "aws_iam_policy" "codebuild_s3_write" {
+  name = "codebuild-s3-write"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = ["s3:PutObject"],
+        Resource = "${aws_s3_bucket.eb_app.arn}/*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_policy_attachment" "attach_codebuild_s3_write" {
+  name       = "codebuild-s3-write-attachment"
+  roles      = [aws_iam_role.codebuild_role.name]
+  policy_arn = aws_iam_policy.codebuild_s3_write.arn
+}
